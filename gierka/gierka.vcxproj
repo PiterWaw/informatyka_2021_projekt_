@@ -142,16 +142,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bullet.cpp" />
     <ClCompile Include="enemy.cpp" />
+    <ClCompile Include="enemySpawner.cpp" />
+    <ClCompile Include="HUD.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mapa.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="shotting.cpp" />
     <ClCompile Include="weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bullet.h" />
     <ClInclude Include="enemy.h" />
+    <ClInclude Include="enemySpawner.h" />
+    <ClInclude Include="HUD.h" />
     <ClInclude Include="mapa.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="shotting.h" />
     <ClInclude Include="weapon.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

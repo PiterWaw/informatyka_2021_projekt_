@@ -71,7 +71,7 @@ int mapa::collisionLeft(player player1)
 	{
 		for (int j = 0; j < sizeY; j++)
 		{
-			if (mapaa[i][j] != 9)
+			if (mapaa[i][j] != 9 && mapaa[i][j] != 0)
 			{
 				sf::Vector2f tilePos;
 				tilePos.x = i * 64;
@@ -84,7 +84,7 @@ int mapa::collisionLeft(player player1)
 	{
 		for (int j = 0; j < sizeY; j++)
 		{
-			if (mapaa[i][j] != 9)
+			if (mapaa[i][j] != 9 && mapaa[i][j] != 0)
 			{
 				sf::Vector2f tilePos;
 				tilePos.x = i * 64;
@@ -106,7 +106,7 @@ int mapa::collisionRight(player player1)
 	{
 		for (int j = 0; j < sizeY; j++)
 		{
-			if (mapaa[i][j] != 9)
+			if (mapaa[i][j] != 9 && mapaa[i][j] != 0)
 			{
 				sf::Vector2f tilePos;
 				tilePos.x = i * 64;
@@ -119,7 +119,7 @@ int mapa::collisionRight(player player1)
 	{
 		for (int j = 0; j < sizeY; j++)
 		{
-			if (mapaa[i][j] != 9)
+			if (mapaa[i][j] != 9 && mapaa[i][j] != 0)
 			{
 				sf::Vector2f tilePos;
 				tilePos.x = i * 64;
@@ -141,7 +141,7 @@ int mapa::collisionUp(player player1)
 	{
 		for (int j = 0; j < sizeY; j++)
 		{
-			if (mapaa[i][j] != 9)
+			if (mapaa[i][j] != 9 && mapaa[i][j] != 0)
 			{
 				sf::Vector2f tilePos;
 				tilePos.x = i * 64;
@@ -154,7 +154,7 @@ int mapa::collisionUp(player player1)
 	{
 		for (int j = 0; j < sizeY; j++)
 		{
-			if (mapaa[i][j] != 9)
+			if (mapaa[i][j] != 9 && mapaa[i][j] != 0)
 			{
 				sf::Vector2f tilePos;
 				tilePos.x = i * 64;
@@ -176,7 +176,7 @@ int mapa::collisionDown(player player1)
 	{
 		for (int j = 0; j < sizeY; j++)
 		{
-			if (mapaa[i][j] != 9)
+			if (mapaa[i][j] != 9 && mapaa[i][j] != 0)
 			{
 				sf::Vector2f tilePos;
 				tilePos.x = i * 64;
@@ -189,7 +189,7 @@ int mapa::collisionDown(player player1)
 	{
 		for (int j = 0; j < sizeY; j++)
 		{
-			if (mapaa[i][j] != 9)
+			if (mapaa[i][j] != 9 && mapaa[i][j] != 0)
 			{
 				sf::Vector2f tilePos;
 				tilePos.x = i * 64;

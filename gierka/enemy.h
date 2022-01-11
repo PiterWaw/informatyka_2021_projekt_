@@ -1,18 +1,28 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <random>
+#include <vector>
 
 class enemy
 {
-private:
-	sf::Sprite *enemyBody;
-	sf::Texture enemyTex;
-	sf::Vector2f spawn1, spawn2, spawn3, spawn4, spawn5;
-	int areSpawned = 0;
 public:
+	
+	sf::Texture enemyTex;
+	sf::RectangleShape hpMaxBar;
+	sf::RectangleShape hpBar;
+	int hpMax = 100;
+	int HP = 100;
+	sf::Sprite enemyBody;
 	enemy();
-	void enemyLoad();
-	void spawnEnemy(int N);
-	void enemyDraw(sf::RenderWindow &window, int N);
+	void enemySetPos(sf::Vector2f pos);
+	sf::Sprite enemyGetBody();
+	sf::Vector2f enemyGetPos();
+
+	void setHpMaxBarPos();
+	void setHpBarPos();
+	sf::RectangleShape getHpMaxBar() { return hpMaxBar; }
+	sf::RectangleShape getHpBar() { return hpBar; }
+
+	void enemySetHp(int damage);
 };
 

@@ -5,6 +5,8 @@ weapon::weapon()
 {
 	weaponTex.loadFromFile("Textures/bron.png");
 	weaponBody.setTexture(weaponTex);
+	weaponTex2.loadFromFile("Textures/shotgun.png");
+	weaponTex3.loadFromFile("Textures/minigun.png");
 	weaponBody.setPosition(500, 200);
 	weaponBody.setOrigin(14, 4);
 }
@@ -30,5 +32,21 @@ void weapon::updatePos(sf::Vector2f pos, sf::Vector2f mousePos)
 
 	weaponBody.setRotation(deg + 90);
 
-	std::cout << "pozycja broni " << pos.x << " " << pos.y << " Pozycja kursora" << mousePos.x << " " << mousePos.y << std::endl;
+	//std::cout << "pozycja broni " << pos.x << " " << pos.y << " Pozycja kursora" << mousePos.x << " " << mousePos.y << std::endl;
+}
+
+void weapon::changeWeapon(int whichWeapon)
+{
+	if (whichWeapon == 1)
+	{
+		weaponBody.setTexture(weaponTex);
+	}
+	else if (whichWeapon == 2)
+	{
+		weaponBody.setTexture(weaponTex2);
+	}
+	else if (whichWeapon == 3)
+	{
+		weaponBody.setTexture(weaponTex3);
+	}
 }
