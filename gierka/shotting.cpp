@@ -15,17 +15,19 @@ void shotting::shottingUpdate(sf::RenderWindow& window, sf::Vector2f mousePos, s
 
 		b1.currentVelocity = b1.aimDirNorm * b1.bulletSpeed;
 
+		b1.damage = weapon.damage;
 		bullets.push_back(bullet(b1));
+
 		weapon.ammo--;
 		cooldown.restart();
 
 		if (weapon.ammo <= 0)
 		{
 			weapon.isLoaded = false;
-			reloadCooldown.restart();
+			weapon.reloadColdown.restart();
 		}
 	}
-	else if (weapon.isLoaded == false && reloadCooldown.getElapsedTime().asMilliseconds() > 5000)
+	else if (weapon.isLoaded == false && weapon.reloadColdown.getElapsedTime().asMilliseconds() > 5000)
 	{
 		weapon.isLoaded = true;
 		weapon.ammo = weapon.maxAmmo;

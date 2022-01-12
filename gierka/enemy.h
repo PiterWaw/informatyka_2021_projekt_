@@ -10,8 +10,8 @@ public:
 	sf::Texture enemyTex;
 	sf::RectangleShape hpMaxBar;
 	sf::RectangleShape hpBar;
-	int hpMax = 100;
-	int HP = 100;
+	float hpMax = 100;
+	float HP = 100;
 	sf::Sprite enemyBody;
 	enemy();
 	void enemySetPos(sf::Vector2f pos);
@@ -23,6 +23,6 @@ public:
 	sf::RectangleShape getHpMaxBar() { return hpMaxBar; }
 	sf::RectangleShape getHpBar() { return hpBar; }
 
-	void enemySetHp(int damage);
+	void enemySetHp(float damage, float xDmg);
 };
 

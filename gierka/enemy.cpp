@@ -38,7 +38,7 @@ void enemy::setHpBarPos()
 	hpBar.setSize(sf::Vector2f(HP, 5));
 }
 
-void enemy::enemySetHp(int damage)
+void enemy::enemySetHp(float damage, float xDmg)
 {
-	HP -= damage;
+	HP -= damage * xDmg;
 }

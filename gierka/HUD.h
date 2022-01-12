@@ -25,7 +25,23 @@ public:
 	std::string ammoDisplay;
 	std::string hpDisplay;
 
+	sf::Sprite m4a4Box;
+	sf::Texture m4a4BoxTex;
+	sf::Sprite shotgunBox;
+	sf::Texture shotgunBoxTex;
+	sf::Sprite minigunBox;
+	sf::Texture minigunBoxTex;
+	sf::RectangleShape chosenWeapon;
+
+	sf::Sprite zombieBox;
+	sf::Texture zombieBoxTex;
+	sf::Text zombieCount;
+	std::string zombieDisplay;
+
+	sf::Text waveInfo;
+	std::string waveInfoString;
+
 	HUD();
-	void hudDisplay(sf::RenderWindow &window, int x, int y, weapon weapon, bool isLoaded, int hp, int hpMax, int whichWeapon);
+	void hudDisplay(sf::RenderWindow &window, int x, int y, weapon weapon, bool isLoaded, int hp, int hpMax, int whichWeapon, int howManyZombie, int whichWave, bool shotgun, bool minigun);
 };
 

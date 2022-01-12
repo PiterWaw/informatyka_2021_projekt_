@@ -18,10 +18,22 @@ enemySpawner::enemySpawner()
 	spawn11 = sf::Vector2f(1022, 1328);
 }
 
-void enemySpawner::enemySpawn()
+void enemySpawner::enemySpawn(bool &waveBreak, int &firstWaveLag)
 {
-	if (clock.getElapsedTime().asMilliseconds() > 500 && howManySpawned != wave*10)
+	
+
+	if (enemies.size() == 0 && firstWaveLag != 0)
+	{
+		waveBreak = true;
+		wave++;
+		xDmg *= 0.9;
+		howManySpawned = 0;
+		//clock.restart();
+	}
+	
+	if (clock.getElapsedTime().asMilliseconds() > 500 && howManySpawned != wave)
 	{	
+		std::cout << "asdad" << wave << std::endl;
 		std::random_device random;
 		std::mt19937 gen(random());
 		std::uniform_int_distribution<> dis(1, 11);
@@ -70,12 +82,13 @@ void enemySpawner::enemySpawn()
 		howManySpawned++;
 
 		clock.restart();
+
+		firstWaveLag++;
 	}
 }
 
 void enemySpawner::enemyDraw(sf::RenderWindow &window)
 {
-	enemySpawn();
 
 	for (size_t i = 0; i < enemies.size(); i++)
 	{
@@ -98,10 +111,15 @@ void enemySpawner::enemyCollision(shotting shotting, int damage)
 			if (bulletsBounds.intersects(enemyBounds))
 			{				
 				//shotting.bullets.erase(shotting.bullets.begin() + j);
-				enemies[i].enemySetHp(damage);
-				std::cout << damage << std::endl;
+				enemies[i].enemySetHp(shotting.bullets[j].damage, xDmg);
+				
+				//std::cout << damage << std::endl;
 				if (enemies[i].HP <= 0)
 				{
+					std::random_device random;
+					std::mt19937 gen(random());
+					std::uniform_int_distribution<> dis(1, 3);
+					money += dis(gen);
 					enemies.erase(enemies.begin() + i);
 				}
 				
@@ -109,6 +127,8 @@ void enemySpawner::enemyCollision(shotting shotting, int damage)
 			}
 		}
 	}
+	
+	
 	/*for (size_t i = 0; i < enemies.size(); i++)
 	{
 		for (size_t j = 0; j < shotting.bullets.size(); j++)

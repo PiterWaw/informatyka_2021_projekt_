@@ -13,10 +13,13 @@ public:
 
 	int maxAmmo = 30;
 	int ammo = maxAmmo;
-	int damage = 1;
+	float damage = 1;
 	int fireRate = 1;
 	bool isLoaded = true;
 
+	sf::Clock reloadColdown;
+
+	bool isUnlocked = false;
 	
 
 	weapon();
