@@ -1,10 +1,13 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "player.h"
+#include <vector>
 
 class mapa
 {
 public:
+	sf::RectangleShape tileWall;
+	std::vector<sf::RectangleShape> tilesArr;
 	int sizeX = 26, sizeY = 26;
 	int px = 64;
 	int mapaa[26][26] = { 					  

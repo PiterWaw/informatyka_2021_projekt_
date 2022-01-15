@@ -3,8 +3,6 @@
 
 waveBreak::waveBreak()
 {
-	
-
 	buttonTex.loadFromFile("Textures/button.png");
 	button1.setTexture(buttonTex);
 	button2.setTexture(buttonTex);
@@ -71,10 +69,33 @@ waveBreak::waveBreak()
 	helpInfo.setFont(font);
 	helpInfo.setFillColor(sf::Color::Black);
 	helpInfo.setCharacterSize(25);
+
+	lvl1.setFont(font);
+	lvl1.setFillColor(sf::Color::Black);
+	lvl2.setFont(font);
+	lvl2.setFillColor(sf::Color::Black);
+	lvl3.setFont(font);
+	lvl3.setFillColor(sf::Color::Black);
+	lvl1.setCharacterSize(20);
+	lvl2.setCharacterSize(20);
+	lvl3.setCharacterSize(20);
+	lvlInfo.setFont(font);
+	lvlInfo.setFillColor(sf::Color::Black);
+	lvlInfo.setCharacterSize(15);
 }
 
-void waveBreak::waveBreakDisplay(sf::RenderWindow& window, int x, int y, weapon &m4a4, weapon& shotgun, weapon& minigun, int &moneyy, bool shotgunIsUnlocked, bool minigunIsUnlocked, bool &waveBreakk, sf::Event event)
+void waveBreak::waveBreakDisplay(sf::RenderWindow& window, int x, int y, weapon &m4a4, weapon& shotgun, weapon& minigun, int &moneyy, bool shotgunIsUnlocked, bool minigunIsUnlocked, bool &waveBreakk, sf::Event event, bool& firstWaveLag, int &menuStage)
 {
+	if (firstWaveLag == true)
+	{
+		m4a4.ammo = m4a4.maxAmmo;
+		shotgun.ammo = shotgun.maxAmmo;
+		minigun.ammo = minigun.maxAmmo;
+		m4a4.isLoaded = true;
+		shotgun.isLoaded = true;
+		minigun.isLoaded = true;
+	}
+
 	button1Hover.setFillColor(sf::Color(134, 134, 134, 80));
 	button2Hover.setFillColor(sf::Color(134, 134, 134, 80));
 
@@ -121,6 +142,20 @@ void waveBreak::waveBreakDisplay(sf::RenderWindow& window, int x, int y, weapon 
 	window.draw(resume);
 	window.draw(help);
 	window.draw(exit);
+
+	lvlInfo.setString("Level");
+	lvl1.setString(std::to_string(m4a4.lvl));
+	lvl2.setString(std::to_string(shotgun.lvl));
+	lvl3.setString(std::to_string(minigun.lvl));
+	lvlInfo.setPosition(x - 30, y - 80);
+	lvl1.setPosition(x - 20, y - 47);
+	lvl2.setPosition(x - 20, y + 13);
+	lvl3.setPosition(x - 20, y + 73);
+	window.draw(lvl1);
+	window.draw(lvl2);
+	window.draw(lvl3);
+	window.draw(lvlInfo);
+
 
 	helpInfo.setString("Move with: WSAD\n\nEarn money by killing\nthe enemies!\n\nChange weapon with buttons: 1, 2, 3");
 	helpInfo.setPosition(x-32, y-100);
@@ -169,38 +204,43 @@ void waveBreak::waveBreakDisplay(sf::RenderWindow& window, int x, int y, weapon 
 	}
 	else if (isButtonPushed(window, button3, x, y, event) == true)
 	{
-		window.close();
+		menuStage = 1;
+		waveBreakk = false;
 	}
 	else if (isButtonPushed(window, upgrade1, x, y, event) == true)
 	{
 		if (moneyy >= 100)
 		{
-			m4a4.damage+=3;
+			m4a4.damage+=15;
 			moneyy -= 100;
+			m4a4.lvl++;
 		}
 	}
 	else if (isButtonPushed(window, upgrade2, x, y, event) == true && shotgunIsUnlocked == true)
 	{
 		if (moneyy >= 100)
 		{
-			shotgun.damage += 6;
+			shotgun.damage += 30;
 			moneyy -= 100;
+			shotgun.lvl++;
 		}
 	}
 	else if (isButtonPushed(window, upgrade3, x, y, event) == true && minigunIsUnlocked == true)
 	{
 		if (moneyy >= 100)
 		{
-			minigun.damage += 1;
+			minigun.damage += 5;
 			moneyy -= 100;
+			minigun.lvl++;
 		}
 	}
-	else if (isButtonPushed(window, upgrade2, x, y, event) == true && minigunIsUnlocked == false)
+	else if (isButtonPushed(window, upgrade2, x, y, event) == true && shotgunIsUnlocked == false)
 	{
 		if (moneyy >= 150)
 		{
 			shotgun.isUnlocked = true;
 			moneyy -= 150;
+			shotgun.lvl++;
 		}
 	}
 	else if (isButtonPushed(window, upgrade3, x, y, event) == true && minigunIsUnlocked == false)
@@ -209,6 +249,7 @@ void waveBreak::waveBreakDisplay(sf::RenderWindow& window, int x, int y, weapon 
 		{
 			minigun.isUnlocked = true;
 			moneyy -= 150;
+			minigun.lvl++;
 		}
 	}
 

@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include "SFML/Audio.hpp"
 #include <iostream>
 #include "mapa.h"
 #include "weapon.h"
@@ -10,11 +11,96 @@
 #include "enemySpawner.h"
 #include "HUD.h"
 #include "waveBreak.h"
+#include "gameOver.h"
+#include "menu.h"
+
+#pragma warning(disable : 4996)
+#pragma comment(lib, "openal32.lib")
+#pragma comment(lib, "sndfile.lib") 
+#pragma comment(lib, "sfml-system.lib") 
+
+
+
+typedef struct {
+	char name[20];
+	int score;
+} dataStruct;
+
+class data
+{
+public:
+	dataStruct s1[3];
+
+	FILE* file;
+
+	void save(std::string name, int score);
+	void read();
+	data();
+
+	const char* PERSON_OUT = "(%s, %d)\n";
+	const char* PERSON_IN = "(%s, %d)\n";
+};
+
+data::data()
+{
+
+}
+
+void data::save(std::string name, int score)
+{
+	//read();
+
+	fopen_s(&file, "leaderboard.dat", "w+");
+
+	if (score > s1[2].score)
+	{
+		if (score > s1[1].score)
+		{
+			if (score > s1[0].score)
+			{
+				s1[0].score = score;
+				strcpy(s1[0].name, name.c_str());
+			}
+			else
+			{
+				s1[1].score = score;
+				strcpy(s1[1].name, name.c_str());
+			}
+		}
+		else
+		{
+			s1[2].score = score;
+			strcpy(s1[2].name, name.c_str());
+		}
+	}
+
+	for (int i = 0; i < 3; i++)
+	{
+		//fwrite(s1, sizeof(s1), 3, file);
+		fprintf_s(file, PERSON_OUT, s1[i].name, s1[i].score);
+	}
+	fclose(file);
+}
+
+void data::read()
+{
+	//file = fopen("leaderboard.dat", "r");
+	fopen_s(&file, "leaderboard.dat", "r");
+
+	fseek(file, 0, SEEK_SET);
+	for (int i = 0; i < 3; i++)
+	{
+		//fread(s1, sizeof(s1), 3, file);		
+		fscanf_s(file, s1[i].name, 20, s1[i].score);
+	}
+
+	fclose(file);
+}
 
 int main()
 {
 	sf::RenderWindow gra(sf::VideoMode(1920, 1080), "Gierka Alpha v0.1", sf::Style::Fullscreen); //1280, 768
-	
+
 	sf::Clock lag;
 
 	player player1;
@@ -36,23 +122,26 @@ int main()
 	enemySpawner enemySpawner;
 	HUD HUD;
 	waveBreak waveBreak;
+	gameOver gameOver;
+	menu menu;
+	data data;
 	mapa1.loadFiles();
 	int whichWeapon = 1;
 
 	m4a4.maxAmmo = 30;
 	m4a4.ammo = 30;
-	m4a4.damage = 3;
+	m4a4.damage = 45;
 	m4a4.fireRate = 150;
 	m4a4.isUnlocked = true;
 
 	shotgun.maxAmmo = 5;
 	shotgun.ammo = 5;
-	shotgun.damage = 10;
+	shotgun.damage = 200;
 	shotgun.fireRate = 1500;
 
 	minigun.maxAmmo = 100;
 	minigun.ammo = 100;
-	minigun.damage = 1;
+	minigun.damage = 15;
 	minigun.fireRate = 60;
 	//minigun.isUnlocked = true;
 
@@ -62,12 +151,17 @@ int main()
 	int sizeX = mapa1.getSizeX();
 	int sizeY = mapa1.getSizeY();
 	int firstWaveLag = 0;
+	int firstWaveLaggg = 0;
+	int menuStage = 1;
+	bool resetAmmo = false;
+	bool saveResaults = false;
+	bool waveBreaks = false;
 
-	bool waveBreaks = true;
+	sf::Event event;
+	
 
 	while (gra.isOpen())
 	{
-		sf::Event event;
 		while (gra.pollEvent(event))
 		{
 			switch (event.type)
@@ -78,170 +172,190 @@ int main()
 			}
 		}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num9))
+		if (menuStage == 1 || menuStage == 2 || menuStage == 3)
 		{
-			gra.close();
-		}
-
-		gra.setView(view);
-		HUDx = player1.getPlayerPosition().x;
-		HUDy = player1.getPlayerPosition().y;
-
-		
-
-		if (waveBreaks == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-		{
-			waveBreaks = true;
-			gra.clear(sf::Color(241, 221, 221));
-			
-			for (int i = 0; i < sizeX; i++)
+			if (saveResaults == true)
 			{
-				for (int j = 0; j < sizeY; j++)
-				{
-					gra.draw(mapa1.loadTile(i, j));
-				}
+				data.save("piotrek", enemySpawner.wave - 10);
 			}
-			HUD.hudDisplay(gra, HUDx, HUDy, shotgun, shotgun.isLoaded, player1.hp, player1.hpMax, whichWeapon, enemySpawner.enemies.size(), enemySpawner.wave, shotgun.isUnlocked, minigun.isUnlocked);
-			
-			waveBreak.waveBreakDisplay(gra, HUDx, HUDy, m4a4, shotgun, minigun, enemySpawner.money, shotgun.isUnlocked, minigun.isUnlocked, waveBreaks, event);
+			menu.menuDisplay(gra, event, menuStage, view, waveBreaks);
 
+			player1.hp = player1.hpMax;
+			player1.body.setPosition(500.f, 200.f);
+			enemySpawner.wave = 10;
+			enemySpawner.xDmg = 1;
+			enemySpawner.enemies.clear();
+			shotting.bullets.clear();
+			m4a4.damage = 45;
+			shotgun.damage = 200;
+			minigun.damage = 15;
+			waveBreaks = false;
+			enemySpawner.extraSpawn = 1;
+			enemySpawner.howManySpawned = 0;
+			firstWaveLag = 0;
+			m4a4.lvl = 1;
+			shotgun.lvl = 0;
+			minigun.lvl = 0;
+			enemySpawner.money = 0;
+		}
+		else if (menuStage == 5)
+		{
+			gameOver.gameOverDisplay(gra, HUDx, HUDy, event, enemySpawner.wave, menuStage, saveResaults);		
 		}
 		else
 		{
-			speed = player1.getSpeed();
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) player1.movePlayer(-movementSpeedLeft, 0.f);
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) player1.movePlayer(0.f, movementSpeedDown);
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) player1.movePlayer(movementSpeedRight, 0.f);
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) player1.movePlayer(0.f, -movementSpeedUp);
 
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) && m4a4.isUnlocked == true)
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num9))
 			{
-				if (whichWeapon != 1)
+				gra.close();
+			}
+
+			gra.setView(view);
+			HUDx = player1.getPlayerPosition().x;
+			HUDy = player1.getPlayerPosition().y;
+
+			sf::Vector2f posForEnemies = sf::Vector2f(HUDx, HUDy);
+
+			if (player1.hp < 0)
+			{
+				menuStage = 5;
+			}
+
+			if (waveBreaks == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+			{
+				waveBreaks = true;
+				gra.clear(sf::Color(241, 221, 221));
+
+				for (int i = 0; i < sizeX; i++)
 				{
-					shotting.isFirstShot = true;
-					m4a4.reloadColdown.restart();
+					for (int j = 0; j < sizeY; j++)
+					{
+						gra.draw(mapa1.loadTile(i, j));
+					}
 				}
-				whichWeapon = 1;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2) && shotgun.isUnlocked == true)
-			{
-				if (whichWeapon != 2)
-				{
-					shotting.isFirstShot = true;
-					shotgun.reloadColdown.restart();
-				}
-				whichWeapon = 2;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3) && minigun.isUnlocked == true)
-			{
-				if (whichWeapon != 3)
-				{
-					shotting.isFirstShot = true;
-					minigun.reloadColdown.restart();
-				}
-				whichWeapon = 3;
-			}
-
-			gra.clear(sf::Color(241, 221, 221));
-
-			
-			for (int i = 0; i < sizeX; i++)
-			{
-				for (int j = 0; j < sizeY; j++)
-				{
-					gra.draw(mapa1.loadTile(i, j));
-				}
-			}
-
-			movementSpeedLeft = mapa1.collisionLeft(player1);
-			movementSpeedRight = mapa1.collisionRight(player1);
-			movementSpeedUp = mapa1.collisionUp(player1);
-			movementSpeedDown = mapa1.collisionDown(player1);
-
-			gra.draw(player1.getPlayer());
-
-			mouse_pos = gra.mapPixelToCoords(sf::Mouse::getPosition(gra));
-
-
-			
-
-
-			if (whichWeapon == 1)
-			{
-				m4a4.changeWeapon(whichWeapon);
-
-				m4a4.updatePos(sf::Vector2f(player1.getPlayerPosition()), mouse_pos);
-				gra.draw(m4a4.getWeapon());
-
-				view.setCenter(sf::Vector2f(player1.getPlayerPosition().x + 32, player1.getPlayerPosition().y + 32));
-
-				enemySpawner.enemyCollision(shotting, shotting.b1.damage);
-				enemySpawner.enemySpawn(waveBreaks, firstWaveLag);
-				enemySpawner.enemyDraw(gra);
-
-				shotting.bulletCollision(mapa1);
-				shotting.shottingUpdate(gra, mouse_pos, m4a4.weaponBody.getPosition(), mapa1, m4a4);
-
-				HUD.hudDisplay(gra, HUDx, HUDy, m4a4, m4a4.isLoaded, player1.hp, player1.hpMax, whichWeapon, enemySpawner.enemies.size(), enemySpawner.wave, shotgun.isUnlocked, minigun.isUnlocked);
-			}
-			else if (whichWeapon == 2)
-			{
-				shotgun.changeWeapon(whichWeapon);
-
-				shotgun.updatePos(sf::Vector2f(player1.getPlayerPosition()), mouse_pos);
-				gra.draw(shotgun.getWeapon());
-
-				view.setCenter(sf::Vector2f(player1.getPlayerPosition().x + 32, player1.getPlayerPosition().y + 32));
-
-				enemySpawner.enemyCollision(shotting, shotgun.damage);
-				enemySpawner.enemySpawn(waveBreaks, firstWaveLag);
-				enemySpawner.enemyDraw(gra);
-
-				shotting.bulletCollision(mapa1);
-				shotting.shottingUpdate(gra, mouse_pos, shotgun.weaponBody.getPosition(), mapa1, shotgun);
-
 				HUD.hudDisplay(gra, HUDx, HUDy, shotgun, shotgun.isLoaded, player1.hp, player1.hpMax, whichWeapon, enemySpawner.enemies.size(), enemySpawner.wave, shotgun.isUnlocked, minigun.isUnlocked);
+
+				waveBreak.waveBreakDisplay(gra, HUDx, HUDy, m4a4, shotgun, minigun, enemySpawner.money, shotgun.isUnlocked, minigun.isUnlocked, waveBreaks, event, resetAmmo, menuStage);
+
+				//path.pathUpdate(mapa1);
+
 			}
-			else if (whichWeapon == 3)
+			else
 			{
-				minigun.changeWeapon(whichWeapon);
+				speed = player1.getSpeed();
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) player1.movePlayer(-movementSpeedLeft, 0.f);
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) player1.movePlayer(0.f, movementSpeedDown);
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) player1.movePlayer(movementSpeedRight, 0.f);
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) player1.movePlayer(0.f, -movementSpeedUp);
 
-				minigun.updatePos(sf::Vector2f(player1.getPlayerPosition()), mouse_pos);
-				gra.draw(minigun.getWeapon());
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) && m4a4.isUnlocked == true)
+				{
+					if (whichWeapon != 1)
+					{
+						shotting.isFirstShot = true;
+						m4a4.reloadColdown.restart();
+					}
+					whichWeapon = 1;
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2) && shotgun.isUnlocked == true)
+				{
+					if (whichWeapon != 2)
+					{
+						shotting.isFirstShot = true;
+						shotgun.reloadColdown.restart();
+					}
+					whichWeapon = 2;
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3) && minigun.isUnlocked == true)
+				{
+					if (whichWeapon != 3)
+					{
+						shotting.isFirstShot = true;
+						minigun.reloadColdown.restart();
+					}
+					whichWeapon = 3;
+				}
 
-				view.setCenter(sf::Vector2f(player1.getPlayerPosition().x + 32, player1.getPlayerPosition().y + 32));
-
-				enemySpawner.enemyCollision(shotting, minigun.damage);
-				enemySpawner.enemySpawn(waveBreaks, firstWaveLag);
-				enemySpawner.enemyDraw(gra);
-
-				shotting.bulletCollision(mapa1);
-				shotting.shottingUpdate(gra, mouse_pos, minigun.weaponBody.getPosition(), mapa1, minigun);
-
-				HUD.hudDisplay(gra, HUDx, HUDy, minigun, minigun.isLoaded, player1.hp, player1.hpMax, whichWeapon, enemySpawner.enemies.size(), enemySpawner.wave, shotgun.isUnlocked, minigun.isUnlocked);
-			}
-
-			//waveBreak = enemySpawner.isWaveEnded;
-			
-
-			//std::cout << m4a4.damage << " " << shotgun.damage << " " << minigun.damage << std::endl;
+				gra.clear(sf::Color(241, 221, 221));
 
 
+				for (int i = 0; i < sizeX; i++)
+				{
+					for (int j = 0; j < sizeY; j++)
+					{
+						gra.draw(mapa1.loadTile(i, j));
+					}
+				}
 
-			/*std::cout <<"m4a4: "<< m4a4.ammo << "   " << m4a4.maxAmmo << std::endl;
-			std::cout << "shotgun: " << shotgun.ammo << "   " << shotgun.maxAmmo << std::endl;
-			std::cout << "minigun: " << minigun.ammo << "   " << minigun.maxAmmo << std::endl;*/
+				movementSpeedLeft = mapa1.collisionLeft(player1);
+				movementSpeedRight = mapa1.collisionRight(player1);
+				movementSpeedUp = mapa1.collisionUp(player1);
+				movementSpeedDown = mapa1.collisionDown(player1);
+
+				gra.draw(player1.getPlayer());
+
+				mouse_pos = gra.mapPixelToCoords(sf::Mouse::getPosition(gra));
 
 
 
 
-			//std::cout << player1.getPlayerPosition().x <<"   "<<player1.getPlayerPosition().y << std::endl;
+
+				if (whichWeapon == 1)
+				{
+					m4a4.changeWeapon(whichWeapon);
+
+					m4a4.updatePos(sf::Vector2f(player1.getPlayerPosition()), mouse_pos);
+					gra.draw(m4a4.getWeapon());
+
+					view.setCenter(sf::Vector2f(player1.getPlayerPosition().x + 32, player1.getPlayerPosition().y + 32));
+
+					enemySpawner.enemyCollision(shotting, shotting.b1.damage, posForEnemies, mapa1, player1);
+					enemySpawner.enemySpawn(waveBreaks, firstWaveLag, player1, resetAmmo);
+					enemySpawner.enemyDraw(gra);
+
+					shotting.bulletCollision(mapa1);
+					shotting.shottingUpdate(gra, mouse_pos, m4a4.weaponBody.getPosition(), mapa1, m4a4);
+
+					HUD.hudDisplay(gra, HUDx, HUDy, m4a4, m4a4.isLoaded, player1.hp, player1.hpMax, whichWeapon, enemySpawner.enemies.size(), enemySpawner.wave, shotgun.isUnlocked, minigun.isUnlocked);
+				}
+				else if (whichWeapon == 2)
+				{
+					shotgun.changeWeapon(whichWeapon);
+
+					shotgun.updatePos(sf::Vector2f(player1.getPlayerPosition()), mouse_pos);
+					gra.draw(shotgun.getWeapon());
+
+					view.setCenter(sf::Vector2f(player1.getPlayerPosition().x + 32, player1.getPlayerPosition().y + 32));
+
+					enemySpawner.enemyCollision(shotting, shotgun.damage, posForEnemies, mapa1, player1);
+					enemySpawner.enemySpawn(waveBreaks, firstWaveLag, player1, resetAmmo);
+					enemySpawner.enemyDraw(gra);
+
+					shotting.bulletCollision(mapa1);
+					shotting.shottingUpdate(gra, mouse_pos, shotgun.weaponBody.getPosition(), mapa1, shotgun);
+
+					HUD.hudDisplay(gra, HUDx, HUDy, shotgun, shotgun.isLoaded, player1.hp, player1.hpMax, whichWeapon, enemySpawner.enemies.size(), enemySpawner.wave, shotgun.isUnlocked, minigun.isUnlocked);
+				}
+				else if (whichWeapon == 3)
+				{
+					minigun.changeWeapon(whichWeapon);
+
+					minigun.updatePos(sf::Vector2f(player1.getPlayerPosition()), mouse_pos);
+					gra.draw(minigun.getWeapon());
+
+					view.setCenter(sf::Vector2f(player1.getPlayerPosition().x + 32, player1.getPlayerPosition().y + 32));
+
+					enemySpawner.enemyCollision(shotting, minigun.damage, posForEnemies, mapa1, player1);
+					enemySpawner.enemySpawn(waveBreaks, firstWaveLag, player1, resetAmmo);
+					enemySpawner.enemyDraw(gra);
+
+					shotting.bulletCollision(mapa1);
+					shotting.shottingUpdate(gra, mouse_pos, minigun.weaponBody.getPosition(), mapa1, minigun);
+
+					HUD.hudDisplay(gra, HUDx, HUDy, minigun, minigun.isLoaded, player1.hp, player1.hpMax, whichWeapon, enemySpawner.enemies.size(), enemySpawner.wave, shotgun.isUnlocked, minigun.isUnlocked);
+				}
+			}		
 		}
-
-		
-		
-		
-		
 		gra.display();
 	}
 }

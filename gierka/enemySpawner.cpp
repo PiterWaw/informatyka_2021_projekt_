@@ -18,22 +18,25 @@ enemySpawner::enemySpawner()
 	spawn11 = sf::Vector2f(1022, 1328);
 }
 
-void enemySpawner::enemySpawn(bool &waveBreak, int &firstWaveLag)
+void enemySpawner::enemySpawn(bool &waveBreak, int &firstWaveLag, player &player, bool& ammoReset)
 {
 	
 
 	if (enemies.size() == 0 && firstWaveLag != 0)
 	{
 		waveBreak = true;
+		ammoReset = true;
 		wave++;
-		xDmg *= 0.9;
+		extraSpawn++;
+		xDmg *= 0.93;
 		howManySpawned = 0;
+		player.hp = player.hpMax;
 		//clock.restart();
 	}
 	
-	if (clock.getElapsedTime().asMilliseconds() > 500 && howManySpawned != wave)
+	if (clock.getElapsedTime().asMilliseconds() > 500 && howManySpawned != wave + extraSpawn)
 	{	
-		std::cout << "asdad" << wave << std::endl;
+		//std::cout << "asdad" << wave << std::endl;
 		std::random_device random;
 		std::mt19937 gen(random());
 		std::uniform_int_distribution<> dis(1, 11);
@@ -100,46 +103,93 @@ void enemySpawner::enemyDraw(sf::RenderWindow &window)
 	}
 }
 
-void enemySpawner::enemyCollision(shotting shotting, int damage)
+void enemySpawner::enemyMovement(sf::Vector2f playerPos, mapa mapa)
 {
+	for (size_t i = 0; i < enemies.size(); i++)
+	{
+		sf::Vector2f normalizedDir;
+		sf::Vector2f enemyPos = enemies[i].enemyGetPos();
+		sf::Vector2f direction = sf::Vector2f(playerPos.x - enemyPos.x + 32, playerPos.y - enemyPos.y + 32);
+		normalizedDir = sf::Vector2f(direction.x / sqrt(pow(direction.x, 2) + pow(direction.y, 2)), direction.y / sqrt(pow(direction.x, 2) + pow(direction.y, 2)));
+
+
+		const float PI = 3.14159265;
+
+		float dx = enemyPos.x - playerPos.x;
+		float dy = enemyPos.y - playerPos.y;
+
+		float rotation = (atan2(dy, dx)) * 180 / PI;
+
+		enemies[i].enemyBody.setRotation(rotation + 100);
+
+		sf::Vector2f currentSpeed = sf::Vector2f(normalizedDir.x * enemies[i].speed, normalizedDir.y * enemies[i].speed);
+
+		enemies[i].enemyBody.move(currentSpeed);
+	}	
+
+	
+}
+
+void enemySpawner::enemyCollision(shotting &shotting, int damage, sf::Vector2f playerPos, mapa mapa, player &player)
+{
+	enemyMovement(playerPos, mapa);
+	bool hit = false;
+
 	for (size_t j = 0; j < shotting.bullets.size(); j++)
 	{
+		hit = false;
 		for (size_t i = 0; i < enemies.size(); i++)
 		{
 			sf::FloatRect bulletsBounds = shotting.bullets[j].bulletObject.getGlobalBounds();
 			sf::FloatRect enemyBounds = enemies[i].enemyBody.getGlobalBounds();
 			if (bulletsBounds.intersects(enemyBounds))
-			{				
+			{
 				//shotting.bullets.erase(shotting.bullets.begin() + j);
 				enemies[i].enemySetHp(shotting.bullets[j].damage, xDmg);
-				
+				hit = true;
 				//std::cout << damage << std::endl;
 				if (enemies[i].HP <= 0)
 				{
 					std::random_device random;
 					std::mt19937 gen(random());
-					std::uniform_int_distribution<> dis(1, 3);
+					std::uniform_int_distribution<> dis(2, 6);
 					money += dis(gen);
 					enemies.erase(enemies.begin() + i);
+					
 				}
-				
 				//std::cout << "trafiony   " << shotting.bullets.size() <<"   "<<enemies[i].HP << std::endl;;
 			}
 		}
+		if (hit == true)
+		{
+			shotting.bullets.erase(shotting.bullets.begin() + j);
+		}
 	}
-	
-	
-	/*for (size_t i = 0; i < enemies.size(); i++)
+
+	for (size_t i = 0; i < enemies.size(); i++)
 	{
-		for (size_t j = 0; j < shotting.bullets.size(); j++)
+		sf::FloatRect enemyBounds = enemies[i].enemyBody.getGlobalBounds();
+		sf::FloatRect playerBounds = player.body.getGlobalBounds();
+		if (enemyBounds.intersects(playerBounds) && enemies[i].hitCooldown.getElapsedTime().asMilliseconds()>500)
+		{
+			player.hp -= 3;
+			enemies[i].hitCooldown.restart();
+		}
+	}
+
+	/*for (size_t j = 0; j < shotting.bullets.size(); j++)
+	{
+		for (size_t i = 0; i < enemies.size(); i++)
 		{
 			sf::FloatRect bulletsBounds = shotting.bullets[j].bulletObject.getGlobalBounds();
 			sf::FloatRect enemyBounds = enemies[i].enemyBody.getGlobalBounds();
 			if (enemyBounds.intersects(bulletsBounds))
 			{
 				shotting.bullets.erase(shotting.bullets.begin() + j);
-				std::cout << "aa  \n";
+				//std::cout << "aa  \n";
 			}
 		}
 	}*/
+	
+	
 }

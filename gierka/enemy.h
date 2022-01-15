@@ -12,6 +12,9 @@ public:
 	sf::RectangleShape hpBar;
 	float hpMax = 100;
 	float HP = 100;
+	float speed = 2.5;
+	sf::Clock hitCooldown;
+
 	sf::Sprite enemyBody;
 	enemy();
 	void enemySetPos(sf::Vector2f pos);

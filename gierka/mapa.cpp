@@ -58,7 +58,18 @@ void mapa::loadFiles()
 }
 mapa::mapa()
 {
-
+	tileWall.setSize(sf::Vector2f(64, 64));
+	for (int i = 0; i < sizeX; i++)
+	{
+		for (int j = 0; j < sizeY;j++)
+		{
+			if (mapaa[i][j] != 9 && mapaa[i][j] != 0)
+			{
+				tileWall.setPosition(i * 64, j * 64);
+				tilesArr.push_back(tileWall);
+			}
+		}
+	}
 }
 int mapa::collisionLeft(player player1)
 {

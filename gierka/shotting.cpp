@@ -1,8 +1,6 @@
 #include "shotting.h"
 
 
-
-
 void shotting::shottingUpdate(sf::RenderWindow& window, sf::Vector2f mousePos, sf::Vector2f weaponPos, mapa mapa, weapon& weapon)
 {
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && (cooldown.getElapsedTime().asMilliseconds() > weapon.fireRate || isFirstShot == true) && weapon.isLoaded == true)
@@ -17,9 +15,12 @@ void shotting::shottingUpdate(sf::RenderWindow& window, sf::Vector2f mousePos, s
 
 		b1.damage = weapon.damage;
 		bullets.push_back(bullet(b1));
+		sound1.play();
 
 		weapon.ammo--;
 		cooldown.restart();
+
+		
 
 		if (weapon.ammo <= 0)
 		{
@@ -27,11 +28,11 @@ void shotting::shottingUpdate(sf::RenderWindow& window, sf::Vector2f mousePos, s
 			weapon.reloadColdown.restart();
 		}
 	}
-	else if (weapon.isLoaded == false && weapon.reloadColdown.getElapsedTime().asMilliseconds() > 5000)
+	else if ((weapon.isLoaded == false && weapon.reloadColdown.getElapsedTime().asMilliseconds() > 2000) )
 	{
 		weapon.isLoaded = true;
 		weapon.ammo = weapon.maxAmmo;
-		std::cout << "roz\n";
+		//std::cout << "roz\n";
 	}
 
 	for (size_t i = 0; i < bullets.size(); i++)
@@ -85,5 +86,11 @@ int shotting::updateHowMuchAmmo(weapon weapon)
 
 shotting::shotting()
 {
+	if (!buffer1.loadFromFile("Sounds/1.wav")) std::cout << "ERROR" << std::endl;
+	if (!buffer1.loadFromFile("Sounds/2.wav")) std::cout << "ERROR" << std::endl;
+	if (!buffer1.loadFromFile("Sounds/3.wav")) std::cout << "ERROR" << std::endl;
 
+	sound1.setBuffer(buffer1);
+	sound2.setBuffer(buffer2);
+	sound3.setBuffer(buffer3);
 }

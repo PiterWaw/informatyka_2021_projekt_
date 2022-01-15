@@ -16,6 +16,7 @@ public:
 	float damage = 1;
 	int fireRate = 1;
 	bool isLoaded = true;
+	int lvl;
 
 	sf::Clock reloadColdown;
 
