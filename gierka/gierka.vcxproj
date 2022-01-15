@@ -143,7 +143,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="bullet.cpp" />
-    <ClCompile Include="data.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="enemySpawner.cpp" />
     <ClCompile Include="gameOver.cpp" />
@@ -151,6 +150,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mapa.cpp" />
     <ClCompile Include="menu.cpp" />
+    <ClCompile Include="nick.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="shotting.cpp" />
     <ClCompile Include="waveBreak.cpp" />
@@ -158,13 +158,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bullet.h" />
-    <ClInclude Include="data.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="enemySpawner.h" />
     <ClInclude Include="gameOver.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="mapa.h" />
     <ClInclude Include="menu.h" />
+    <ClInclude Include="nick.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="shotting.h" />
     <ClInclude Include="waveBreak.h" />

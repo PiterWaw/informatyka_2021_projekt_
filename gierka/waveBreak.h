@@ -7,6 +7,7 @@ class waveBreak
 {
 public:
 	sf::Sprite button1;
+	sf::Sprite button5;
 	sf::Sprite button2;
 	sf::Sprite button3;
 	sf::Texture buttonTex;

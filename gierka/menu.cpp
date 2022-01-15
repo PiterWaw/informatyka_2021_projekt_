@@ -3,13 +3,26 @@
 menu::menu()
 {
 	button4.setTexture(buttonTex);
+	button5.setTexture(buttonTex);
 	leaderboard.setFont(font);
 	leaderboard.setFillColor(sf::Color::Black);
 	button4.setOrigin(96, 32);
+	button5.setOrigin(96, 32);
 	leaderboard.setCharacterSize(25);
 	helpInfo.setFont(font);
 	helpInfo.setFillColor(sf::Color::Black);
 	helpInfo.setCharacterSize(25);
+	nick.setFont(font);
+	nick.setCharacterSize(25);
+	nick.setFillColor(sf::Color::Black);
+	if (isSelected)
+	{
+		nick.setString("_");
+	}
+	else
+	{
+		nick.setString("");
+	}
 }
 
 void menu::menuDisplay(sf::RenderWindow& window, sf::Event event, int& menuStage, sf::View &view, bool &waveBreak)
@@ -108,49 +121,150 @@ void menu::menuDisplay(sf::RenderWindow& window, sf::Event event, int& menuStage
 		window.draw(leaderboard);
 		window.draw(helpInfo);
 	}
+	else if (menuStage == 6)
+	{
+		
+		button5.setPosition(x, y);
+		infoWaveBoxEmpty.setPosition(x, y);
+		resume.setString("GO BACK");
+		helpInfo.setString("TYPE YOUR NAME: ");
+		resume.setPosition(x-60, y-20);
+		helpInfo.setPosition(x-100, y-150);
+		window.clear(sf::Color(241, 221, 221));
+		window.draw(button5);
+		//window.draw(infoWaveBoxEmpty);
+		window.draw(resume);
+		window.draw(helpInfo);
+
+		nick.setPosition(x - 50, y - 100);
+
+		
+	}
 
 	
+	if (menuStage != 6)
+	{
+		if (isMouseOver(window, button1, x, y) == true)
+		{
+			button1Hover.setPosition(button1.getPosition().x, button1.getPosition().y);
+			window.draw(button1Hover);
+		}
+		else if (isMouseOver(window, button2, x, y) == true)
+		{
+			button1Hover.setPosition(button2.getPosition().x, button2.getPosition().y);
+			window.draw(button1Hover);
+		}
+		else if (isMouseOver(window, button3, x, y) == true)
+		{
+			button1Hover.setPosition(button3.getPosition().x, button3.getPosition().y);
+			window.draw(button1Hover);
+		}
+		else if (isMouseOver(window, button4, x, y) == true)
+		{
+			button1Hover.setPosition(button4.getPosition().x, button4.getPosition().y);
+			window.draw(button1Hover);
+		}
 
-	if (isMouseOver(window, button1, x, y) == true)
-	{
-		button1Hover.setPosition(button1.getPosition().x, button1.getPosition().y);
-		window.draw(button1Hover);
+		if (isButtonPushed(window, button1, x, y, event) == true && menuStage == 1)
+		{
+			menuStage = 6;
+		}
+		else if (isButtonPushed(window, button1, x, y, event) == true && menuStage != 1)
+		{
+			menuStage = 1;
+		}
+		else if (isButtonPushed(window, button2, x, y, event) == true)
+		{
+			menuStage = 2;
+		}
+		else if (isButtonPushed(window, button3, x, y, event) == true)
+		{
+			window.close();
+		}
+		else if (isButtonPushed(window, button4, x, y, event) == true)
+		{
+			menuStage = 3;
+		}
 	}
-	else if (isMouseOver(window, button2, x, y) == true)
+	else
 	{
-		button1Hover.setPosition(button2.getPosition().x, button2.getPosition().y);
-		window.draw(button1Hover);
+		if (isMouseOver(window, button5, x, y) == true)
+		{
+			button1Hover.setPosition(button5.getPosition().x, button5.getPosition().y);
+			window.draw(button1Hover);
+		}
+		if (isButtonPushed(window, button5, x, y, event) == true && menuStage == 6)
+		{
+			menuStage = 4;
+		}
 	}
-	else if (isMouseOver(window, button3, x, y) == true)
-	{
-		button1Hover.setPosition(button3.getPosition().x, button3.getPosition().y);
-		window.draw(button1Hover);
-	}
-	else if (isMouseOver(window, button4, x, y) == true)
-	{
-		button1Hover.setPosition(button4.getPosition().x, button4.getPosition().y);
-		window.draw(button1Hover);
-	}
-
-	if (isButtonPushed(window, button1, x, y, event) == true && menuStage == 1)
-	{
-		menuStage = 4;
-	}
-	else if (isButtonPushed(window, button1, x, y, event) == true && menuStage != 1)
-	{
-		menuStage = 1;
-	}
-	else if (isButtonPushed(window, button2, x, y, event) == true)
-	{
-		menuStage = 2;
-	}
-	else if (isButtonPushed(window, button3, x, y, event) == true)
-	{
-		window.close();
-	}
-	else if (isButtonPushed(window, button4, x, y, event) == true)
-	{
-		menuStage = 3;
-	}
+	
 	waveBreak = false;
+}
+
+void menu::inputLogic(int charTyped)
+{
+	if (charTyped != DELETE_KEY && charTyped != ENTER_KEY && charTyped != ESCAPE_KEY)
+	{
+		nickStream << static_cast<char>(charTyped);
+	}
+	else if (charTyped == DELETE_KEY)
+	{
+		if (nickStream.str().length() > 0)
+		{
+			deleteLastChar();
+		}
+	}
+	nick.setString(nickStream.str() + "_");
+}
+
+void menu::deleteLastChar()
+{
+	std::string t = nickStream.str();
+	std::string newT = "";
+	for (int i = 0; i < t.length() - 1; i++)
+	{
+		newT += t[i];
+	}
+	nickStream.str("");
+	nickStream << newT;
+
+	nick.setString(nickStream.str());
+}
+
+void menu::setSelected(bool sel)
+{
+	isSelected = sel;
+	if (!sel)
+	{
+		std::string t = nickStream.str();
+		std::string newT = "";
+		for (int i = 0; i < t.length() - 1; i++)
+		{
+			newT += t[i];
+		}
+		nick.setString(newT);
+
+	}	
+}
+std::string menu::getText()
+{
+	return nickStream.str();
+}
+void menu::drawTo(sf::RenderWindow& window)
+{
+	window.draw(nick);
+}
+void menu::typedOn(sf::Event input)
+{
+	if (isSelected)
+	{
+		int charTyped = input.text.unicode;
+		
+			inputLogic(charTyped);
+			if (charTyped == DELETE_KEY)
+			{
+				deleteLastChar();
+			}
+	}
 }

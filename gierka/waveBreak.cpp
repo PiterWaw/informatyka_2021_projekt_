@@ -12,6 +12,7 @@ waveBreak::waveBreak()
 	button1.setOrigin(96, 32);
 	button2.setOrigin(96, 32);
 	button3.setOrigin(96, 32);
+	
 	button1Hover.setOrigin(96, 32);
 	button1Hover.setSize(sf::Vector2f(192,64));
 	

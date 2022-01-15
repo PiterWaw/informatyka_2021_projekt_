@@ -15,7 +15,7 @@ void shotting::shottingUpdate(sf::RenderWindow& window, sf::Vector2f mousePos, s
 
 		b1.damage = weapon.damage;
 		bullets.push_back(bullet(b1));
-		sound1.play();
+		//sound1.play();
 
 		weapon.ammo--;
 		cooldown.restart();
@@ -86,11 +86,11 @@ int shotting::updateHowMuchAmmo(weapon weapon)
 
 shotting::shotting()
 {
-	if (!buffer1.loadFromFile("Sounds/1.wav")) std::cout << "ERROR" << std::endl;
-	if (!buffer1.loadFromFile("Sounds/2.wav")) std::cout << "ERROR" << std::endl;
-	if (!buffer1.loadFromFile("Sounds/3.wav")) std::cout << "ERROR" << std::endl;
+	//if (!buffer1.loadFromFile("Sounds/1.wav")) std::cout << "ERROR" << std::endl;
+	//if (!buffer1.loadFromFile("Sounds/2.wav")) std::cout << "ERROR" << std::endl;
+	//if (!buffer1.loadFromFile("Sounds/3.wav")) std::cout << "ERROR" << std::endl;
 
-	sound1.setBuffer(buffer1);
-	sound2.setBuffer(buffer2);
-	sound3.setBuffer(buffer3);
+	//sound1.setBuffer(buffer1);
+	//sound2.setBuffer(buffer2);
+	//sound3.setBuffer(buffer3);
 }

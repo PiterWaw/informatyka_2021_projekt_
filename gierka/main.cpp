@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include "SFML/Audio.hpp"
+//#include "SFML/Audio.hpp"
 #include <iostream>
 #include "mapa.h"
 #include "weapon.h"
@@ -13,11 +13,9 @@
 #include "waveBreak.h"
 #include "gameOver.h"
 #include "menu.h"
+#include "nick.h"
 
 #pragma warning(disable : 4996)
-#pragma comment(lib, "openal32.lib")
-#pragma comment(lib, "sndfile.lib") 
-#pragma comment(lib, "sfml-system.lib") 
 
 
 
@@ -125,8 +123,14 @@ int main()
 	gameOver gameOver;
 	menu menu;
 	data data;
+	nick nick(20, sf::Color::Black);
 	mapa1.loadFiles();
 	int whichWeapon = 1;
+
+	sf::Font font;
+	font.loadFromFile("font.ttf");
+	nick.setFont(font);
+	
 
 	m4a4.maxAmmo = 30;
 	m4a4.ammo = 30;
@@ -171,8 +175,18 @@ int main()
 				break;
 			}
 		}
+		if (menuStage == 6)
+		{
+			menu.menuDisplay(gra, event, menuStage, view, waveBreaks);
+			if (sf::Event::TextEntered) nick.napisz_na(event);
+			nick.setPosition(menu.button4.getPosition().x, menu.button4.getPosition().y);
+			nick.draw(gra);
+			std::cout << nick.napis.str() << std::endl;
 
-		if (menuStage == 1 || menuStage == 2 || menuStage == 3)
+			//menu.drawTo(gra);
+			//std::cout << menu.nickStream.str() << std::endl;
+		}
+		else if (menuStage == 1 || menuStage == 2 || menuStage == 3)
 		{
 			if (saveResaults == true)
 			{
@@ -197,11 +211,13 @@ int main()
 			shotgun.lvl = 0;
 			minigun.lvl = 0;
 			enemySpawner.money = 0;
+			menu.nickStream.str() = "";
 		}
 		else if (menuStage == 5)
 		{
 			gameOver.gameOverDisplay(gra, HUDx, HUDy, event, enemySpawner.wave, menuStage, saveResaults);		
 		}
+		
 		else
 		{
 
