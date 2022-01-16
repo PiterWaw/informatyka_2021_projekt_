@@ -1,11 +1,12 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "SFML/Audio.hpp"
 #include "enemy.h"
 #include "mapa.h"
 #include "shotting.h"
 #include "weapon.h"
 #include <math.h>
-//#include "player.h"
+
 
 class enemySpawner
 {
@@ -16,6 +17,8 @@ public:
 
 	sf::Clock clock;
 	
+	sf::SoundBuffer hitb;
+	sf::Sound hits;
 
 	enemy enemy1;
 	std::vector<enemy> enemies;

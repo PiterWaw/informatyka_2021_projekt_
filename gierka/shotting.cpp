@@ -1,7 +1,7 @@
 #include "shotting.h"
 
 
-void shotting::shottingUpdate(sf::RenderWindow& window, sf::Vector2f mousePos, sf::Vector2f weaponPos, mapa mapa, weapon& weapon)
+void shotting::shottingUpdate(sf::RenderWindow& window, sf::Vector2f mousePos, sf::Vector2f weaponPos, mapa mapa, weapon& weapon, int whichWeapon)
 {
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && (cooldown.getElapsedTime().asMilliseconds() > weapon.fireRate || isFirstShot == true) && weapon.isLoaded == true)
 	{	
@@ -15,7 +15,9 @@ void shotting::shottingUpdate(sf::RenderWindow& window, sf::Vector2f mousePos, s
 
 		b1.damage = weapon.damage;
 		bullets.push_back(bullet(b1));
-		//sound1.play();
+		if (whichWeapon == 1) sound3.play();
+		if (whichWeapon == 2) sound2.play();
+		if (whichWeapon == 3) sound1.play();
 
 		weapon.ammo--;
 		cooldown.restart();
@@ -26,6 +28,9 @@ void shotting::shottingUpdate(sf::RenderWindow& window, sf::Vector2f mousePos, s
 		{
 			weapon.isLoaded = false;
 			weapon.reloadColdown.restart();
+			if (whichWeapon == 1) r.play();
+			if (whichWeapon == 2) s.play();
+			if (whichWeapon == 3) m.play();
 		}
 	}
 	else if ((weapon.isLoaded == false && weapon.reloadColdown.getElapsedTime().asMilliseconds() > 2000) )
@@ -86,11 +91,20 @@ int shotting::updateHowMuchAmmo(weapon weapon)
 
 shotting::shotting()
 {
-	//if (!buffer1.loadFromFile("Sounds/1.wav")) std::cout << "ERROR" << std::endl;
-	//if (!buffer1.loadFromFile("Sounds/2.wav")) std::cout << "ERROR" << std::endl;
-	//if (!buffer1.loadFromFile("Sounds/3.wav")) std::cout << "ERROR" << std::endl;
+	if (!buffer1.loadFromFile("Sounds/1.wav")) std::cout << "ERROR" << std::endl;
+	if (!buffer2.loadFromFile("Sounds/2.wav")) std::cout << "ERROR" << std::endl;
+	if (!buffer3.loadFromFile("Sounds/3.wav")) std::cout << "ERROR" << std::endl;
+	if (!sb.loadFromFile("Sounds/s.wav")) std::cout << "ERROR" << std::endl;
+	if (!rb.loadFromFile("Sounds/r.wav")) std::cout << "ERROR" << std::endl;
+	if (!mb.loadFromFile("Sounds/m.wav")) std::cout << "ERROR" << std::endl;
 
-	//sound1.setBuffer(buffer1);
-	//sound2.setBuffer(buffer2);
-	//sound3.setBuffer(buffer3);
+
+
+	sound1.setBuffer(buffer1);
+	sound2.setBuffer(buffer2);
+	sound3.setBuffer(buffer3);
+	sound3.setVolume(20);
+	r.setBuffer(rb);
+	s.setBuffer(sb);
+	m.setBuffer(mb);
 }

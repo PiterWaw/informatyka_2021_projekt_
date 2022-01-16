@@ -87,6 +87,7 @@ waveBreak::waveBreak()
 
 void waveBreak::waveBreakDisplay(sf::RenderWindow& window, int x, int y, weapon &m4a4, weapon& shotgun, weapon& minigun, int &moneyy, bool shotgunIsUnlocked, bool minigunIsUnlocked, bool &waveBreakk, sf::Event event, bool& firstWaveLag, int &menuStage)
 {
+	
 	if (firstWaveLag == true)
 	{
 		m4a4.ammo = m4a4.maxAmmo;

@@ -41,7 +41,9 @@ public:
 	sf::Text waveInfo;
 	std::string waveInfoString;
 
+	sf::Text nickBox;
+
 	HUD();
-	void hudDisplay(sf::RenderWindow &window, int x, int y, weapon weapon, bool isLoaded, int hp, int hpMax, int whichWeapon, int howManyZombie, int whichWave, bool shotgun, bool minigun);
+	void hudDisplay(sf::RenderWindow &window, int x, int y, weapon weapon, bool isLoaded, int hp, int hpMax, int whichWeapon, int howManyZombie, int whichWave, bool shotgun, bool minigun, std::string nick, int xP, int yP);
 };
 

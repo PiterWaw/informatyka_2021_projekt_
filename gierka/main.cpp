@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-//#include "SFML/Audio.hpp"
+#include "SFML/Audio.hpp"
 #include <iostream>
 #include "mapa.h"
 #include "weapon.h"
@@ -14,6 +14,8 @@
 #include "gameOver.h"
 #include "menu.h"
 #include "nick.h"
+
+
 
 #pragma warning(disable : 4996)
 
@@ -99,6 +101,8 @@ int main()
 {
 	sf::RenderWindow gra(sf::VideoMode(1920, 1080), "Gierka Alpha v0.1", sf::Style::Fullscreen); //1280, 768
 
+	gra.setKeyRepeatEnabled(false);
+
 	sf::Clock lag;
 
 	player player1;
@@ -127,9 +131,17 @@ int main()
 	mapa1.loadFiles();
 	int whichWeapon = 1;
 
+	sf::Music music;
+	music.openFromFile("Sounds/music.wav");
+
 	sf::Font font;
 	font.loadFromFile("font.ttf");
 	nick.setFont(font);
+	sf::SoundBuffer deathb;
+	sf::Sound deaths;
+	deathb.loadFromFile("Sounds/dead.wav");
+	deaths.setBuffer(deathb);
+	bool deathp = false;
 	
 
 	m4a4.maxAmmo = 30;
@@ -142,12 +154,13 @@ int main()
 	shotgun.ammo = 5;
 	shotgun.damage = 200;
 	shotgun.fireRate = 1500;
+	shotgun.isUnlocked = true;
 
 	minigun.maxAmmo = 100;
 	minigun.ammo = 100;
 	minigun.damage = 15;
 	minigun.fireRate = 60;
-	//minigun.isUnlocked = true;
+	minigun.isUnlocked = true;
 
 
 	int HUDx = player1.getPlayerPosition().x;
@@ -163,9 +176,12 @@ int main()
 
 	sf::Event event;
 	
+	music.play();
+	music.setVolume(10);
 
 	while (gra.isOpen())
 	{
+		
 		while (gra.pollEvent(event))
 		{
 			switch (event.type)
@@ -178,10 +194,14 @@ int main()
 		if (menuStage == 6)
 		{
 			menu.menuDisplay(gra, event, menuStage, view, waveBreaks);
-			if (sf::Event::TextEntered) nick.napisz_na(event);
-			nick.setPosition(menu.button4.getPosition().x, menu.button4.getPosition().y);
+			
+			if (event.type == sf::Event::TextEntered) nick.napisz_na(event);
+
+			
+			nick.setPosition(menu.button4.getPosition().x-40, menu.button4.getPosition().y-120);
 			nick.draw(gra);
-			std::cout << nick.napis.str() << std::endl;
+			std::cout << nick.returnNpis() <<" " << menuStage<<  std::endl;
+
 
 			//menu.drawTo(gra);
 			//std::cout << menu.nickStream.str() << std::endl;
@@ -212,9 +232,15 @@ int main()
 			minigun.lvl = 0;
 			enemySpawner.money = 0;
 			menu.nickStream.str() = "";
+			deathp = false;
 		}
 		else if (menuStage == 5)
 		{
+			if (deathp == false)
+			{
+				deathp = true;
+				deaths.play();
+			}
 			gameOver.gameOverDisplay(gra, HUDx, HUDy, event, enemySpawner.wave, menuStage, saveResaults);		
 		}
 		
@@ -235,6 +261,7 @@ int main()
 			if (player1.hp < 0)
 			{
 				menuStage = 5;
+				
 			}
 
 			if (waveBreaks == true || sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
@@ -249,7 +276,7 @@ int main()
 						gra.draw(mapa1.loadTile(i, j));
 					}
 				}
-				HUD.hudDisplay(gra, HUDx, HUDy, shotgun, shotgun.isLoaded, player1.hp, player1.hpMax, whichWeapon, enemySpawner.enemies.size(), enemySpawner.wave, shotgun.isUnlocked, minigun.isUnlocked);
+				HUD.hudDisplay(gra, HUDx, HUDy, shotgun, shotgun.isLoaded, player1.hp, player1.hpMax, whichWeapon, enemySpawner.enemies.size(), enemySpawner.wave, shotgun.isUnlocked, minigun.isUnlocked, nick.returnNpis(), player1.getPlayerPosition().x, player1.getPlayerPosition().y);
 
 				waveBreak.waveBreakDisplay(gra, HUDx, HUDy, m4a4, shotgun, minigun, enemySpawner.money, shotgun.isUnlocked, minigun.isUnlocked, waveBreaks, event, resetAmmo, menuStage);
 
@@ -330,9 +357,9 @@ int main()
 					enemySpawner.enemyDraw(gra);
 
 					shotting.bulletCollision(mapa1);
-					shotting.shottingUpdate(gra, mouse_pos, m4a4.weaponBody.getPosition(), mapa1, m4a4);
+					shotting.shottingUpdate(gra, mouse_pos, m4a4.weaponBody.getPosition(), mapa1, m4a4, whichWeapon);
 
-					HUD.hudDisplay(gra, HUDx, HUDy, m4a4, m4a4.isLoaded, player1.hp, player1.hpMax, whichWeapon, enemySpawner.enemies.size(), enemySpawner.wave, shotgun.isUnlocked, minigun.isUnlocked);
+					HUD.hudDisplay(gra, HUDx, HUDy, m4a4, m4a4.isLoaded, player1.hp, player1.hpMax, whichWeapon, enemySpawner.enemies.size(), enemySpawner.wave, shotgun.isUnlocked, minigun.isUnlocked, nick.returnNpis(), player1.getPlayerPosition().x, player1.getPlayerPosition().y);
 				}
 				else if (whichWeapon == 2)
 				{
@@ -348,9 +375,9 @@ int main()
 					enemySpawner.enemyDraw(gra);
 
 					shotting.bulletCollision(mapa1);
-					shotting.shottingUpdate(gra, mouse_pos, shotgun.weaponBody.getPosition(), mapa1, shotgun);
+					shotting.shottingUpdate(gra, mouse_pos, shotgun.weaponBody.getPosition(), mapa1, shotgun, whichWeapon);
 
-					HUD.hudDisplay(gra, HUDx, HUDy, shotgun, shotgun.isLoaded, player1.hp, player1.hpMax, whichWeapon, enemySpawner.enemies.size(), enemySpawner.wave, shotgun.isUnlocked, minigun.isUnlocked);
+					HUD.hudDisplay(gra, HUDx, HUDy, shotgun, shotgun.isLoaded, player1.hp, player1.hpMax, whichWeapon, enemySpawner.enemies.size(), enemySpawner.wave, shotgun.isUnlocked, minigun.isUnlocked, nick.returnNpis(), player1.getPlayerPosition().x, player1.getPlayerPosition().y);
 				}
 				else if (whichWeapon == 3)
 				{
@@ -366,9 +393,9 @@ int main()
 					enemySpawner.enemyDraw(gra);
 
 					shotting.bulletCollision(mapa1);
-					shotting.shottingUpdate(gra, mouse_pos, minigun.weaponBody.getPosition(), mapa1, minigun);
+					shotting.shottingUpdate(gra, mouse_pos, minigun.weaponBody.getPosition(), mapa1, minigun, whichWeapon);
 
-					HUD.hudDisplay(gra, HUDx, HUDy, minigun, minigun.isLoaded, player1.hp, player1.hpMax, whichWeapon, enemySpawner.enemies.size(), enemySpawner.wave, shotgun.isUnlocked, minigun.isUnlocked);
+					HUD.hudDisplay(gra, HUDx, HUDy, minigun, minigun.isLoaded, player1.hp, player1.hpMax, whichWeapon, enemySpawner.enemies.size(), enemySpawner.wave, shotgun.isUnlocked, minigun.isUnlocked, nick.returnNpis(), player1.getPlayerPosition().x, player1.getPlayerPosition().y);
 				}
 			}		
 		}

@@ -16,6 +16,8 @@ enemySpawner::enemySpawner()
 	spawn9 = sf::Vector2f(1280, 824);
 	spawn10 = sf::Vector2f(1532, 1132);
 	spawn11 = sf::Vector2f(1022, 1328);
+	hitb.loadFromFile("Sounds/hit.wav");
+	hits.setBuffer(hitb);
 }
 
 void enemySpawner::enemySpawn(bool &waveBreak, int &firstWaveLag, player &player, bool& ammoReset)
@@ -174,6 +176,7 @@ void enemySpawner::enemyCollision(shotting &shotting, int damage, sf::Vector2f p
 		{
 			player.hp -= 3;
 			enemies[i].hitCooldown.restart();
+			hits.play();
 		}
 	}
 

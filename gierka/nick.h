@@ -20,11 +20,12 @@ public:
 	void napisz_na(sf::Event input);
 	void setFont(sf::Font& font);
 	void setPosition(float width, float height);
-	std::ostringstream napis;
+	std::string returnNpis() { return napis.str(); }
 
 private:
 	sf::Text text; //wyswietlany text
 	sf::Font font;
+	std::ostringstream napis;
 	 //aby dynamicznie edytowac tekst w oknie SFML, strumieñ dziedzicz¹cy po ostream, umo¿liwiaj¹cy jedynie zapis
 	int limit = 8;
 	sf::Texture background;

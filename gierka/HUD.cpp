@@ -51,9 +51,13 @@ HUD::HUD()
 	waveInfo.setFont(font);
 	waveInfo.setFillColor(sf::Color::Black);
 	waveInfo.setLetterSpacing(2);
+
+	nickBox.setFont(font);
+	nickBox.setCharacterSize(25);
+	nickBox.setFillColor(sf::Color::Black);
 }
 
-void HUD::hudDisplay(sf::RenderWindow& window, int x, int y, weapon weapon, bool isLoaded, int hp, int hpMax, int whichWeapon, int howManyZombie, int whichWave, bool shotgun, bool minigun)
+void HUD::hudDisplay(sf::RenderWindow& window, int x, int y, weapon weapon, bool isLoaded, int hp, int hpMax, int whichWeapon, int howManyZombie, int whichWave, bool shotgun, bool minigun, std::string nick, int xP, int yP)
 {
 	int ammo = weapon.ammo;
 	int ammoMax = weapon.maxAmmo;
@@ -113,4 +117,8 @@ void HUD::hudDisplay(sf::RenderWindow& window, int x, int y, weapon weapon, bool
 	waveInfo.setString(waveInfoString);
 	waveInfo.setPosition(x - 870, y - 468);
 	window.draw(waveInfo);
+
+	nickBox.setPosition(xP-13, yP-35);
+	nickBox.setString(nick);
+	window.draw(nickBox);
 }

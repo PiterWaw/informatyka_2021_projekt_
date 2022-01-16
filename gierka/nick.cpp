@@ -13,11 +13,11 @@ nick::~nick()
 void nick::draw(sf::RenderWindow& window)
 {
 	//window.clear();
-	background.loadFromFile("pliki/obrazy/menu_test.png");
-	sf::Sprite tlo;
-	tlo.setTexture(background);
-	tlo.setScale(sf::Vector2f(1.0f, 1.2f));
-	window.draw(tlo);
+	//background.loadFromFile("pliki/obrazy/menu_test.png");
+	//sf::Sprite tlo;
+	//tlo.setTexture(background);
+	//tlo.setScale(sf::Vector2f(1.0f, 1.2f));
+	//window.draw(tlo);
 	window.draw(text);
 }
 
