@@ -22,6 +22,8 @@ public:
 	void setPosition(float width, float height);
 	std::string returnNpis() { return napis.str(); }
 
+	sf::Clock delay;
+
 private:
 	sf::Text text; //wyswietlany text
 	sf::Font font;

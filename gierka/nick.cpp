@@ -12,30 +12,30 @@ nick::~nick()
 
 void nick::draw(sf::RenderWindow& window)
 {
-	//window.clear();
-	//background.loadFromFile("pliki/obrazy/menu_test.png");
-	//sf::Sprite tlo;
-	//tlo.setTexture(background);
-	//tlo.setScale(sf::Vector2f(1.0f, 1.2f));
-	//window.draw(tlo);
+	
 	window.draw(text);
 }
 
 void nick::napisz_na(sf::Event input)
 {
-	int typZnaku = input.text.unicode; //typ znaku otrzyma wartosc unicode wpisywanego znaku z klawiatury
-	if (typZnaku < 128) //czyli litery ukosniki kropki
+	if (delay.getElapsedTime().asMilliseconds() > 200)
 	{
-		if (napis.str().length() <= limit) //jak nie bedzie limit to wprowadzi ciag znakow
+		int typZnaku = input.text.unicode; //typ znaku otrzyma wartosc unicode wpisywanego znaku z klawiatury
+		if (typZnaku < 128) //czyli litery ukosniki kropki
 		{
-			wejscie(typZnaku);
+			if (napis.str().length() <= limit) //jak nie bedzie limit to wprowadzi ciag znakow
+			{
+				wejscie(typZnaku);
+				delay.restart();
+			}
+			else if (napis.str().length() > limit && typZnaku == DELETE) //jak bedzie limit i wcisne DELETE to skasuje
+			{
+				skasuj_znak();
+				//std::cout << "Skasuj" << std::endl;
+				delay.restart();
+			}
 		}
-		else if (napis.str().length() > limit && typZnaku == DELETE) //jak bedzie limit i wcisne DELETE to skasuje
-		{
-			skasuj_znak();
-			std::cout << "Skasuj" << std::endl;
-		}
-	}
+	}	
 }
 
 void nick::setFont(sf::Font& font)

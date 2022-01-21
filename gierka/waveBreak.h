@@ -53,6 +53,10 @@ public:
 	sf::Text lvl3;
 	sf::Text lvlInfo;
 
+	sf::Clock delay;
+
+	
+
 	waveBreak();
 	void waveBreakDisplay(sf::RenderWindow& window, int x, int y, weapon& m4a4, weapon& shotgun, weapon& minigun, int& moneyy, bool shotgunIsUnlocked, bool minigunIsUnlocked, bool &waveBreakk, sf::Event event, bool& firstWaveLag, int& menuStage);
 	bool isMouseOver(sf::RenderWindow& window, sf::Sprite button, int x, int y);

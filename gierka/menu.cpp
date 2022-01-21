@@ -102,7 +102,7 @@ void menu::menuDisplay(sf::RenderWindow& window, sf::Event event, int& menuStage
 		help.setString("HELP");
 		exit.setString("EXIT");
 		leaderboard.setString("LEADERBOARD");
-		helpInfo.setString("1. ktos\n\n2. ktos inny\n\n3. jeszcze ktos inny");
+		helpInfo.setString("1. KTOS\n2. KTOS INNY\n3. KTOS JESZCZE INNY");
 		resume.setPosition(x - 232, y - 135);
 		help.setPosition(x - 202, y - 57);
 		exit.setPosition(x - 200, y + 99);
@@ -126,9 +126,9 @@ void menu::menuDisplay(sf::RenderWindow& window, sf::Event event, int& menuStage
 		
 		button5.setPosition(x, y);
 		infoWaveBoxEmpty.setPosition(x, y);
-		resume.setString("GO BACK");
+		resume.setString("START");
 		helpInfo.setString("TYPE YOUR NAME: ");
-		resume.setPosition(x-60, y-20);
+		resume.setPosition(x-42, y-20);
 		helpInfo.setPosition(x-100, y-150);
 		window.clear(sf::Color(241, 221, 221));
 		window.draw(button5);
@@ -268,3 +268,4 @@ void menu::typedOn(sf::Event input)
 			}
 	}
 }
+

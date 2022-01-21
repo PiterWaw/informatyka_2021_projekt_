@@ -162,6 +162,8 @@ void waveBreak::waveBreakDisplay(sf::RenderWindow& window, int x, int y, weapon 
 	helpInfo.setString("Move with: WSAD\n\nEarn money by killing\nthe enemies!\n\nChange weapon with buttons: 1, 2, 3");
 	helpInfo.setPosition(x-32, y-100);
 	
+	
+
 	if (isMouseOver(window, button1, x, y) == true)
 	{
 		button1Hover.setPosition(button1.getPosition().x, button1.getPosition().y);	
@@ -211,48 +213,68 @@ void waveBreak::waveBreakDisplay(sf::RenderWindow& window, int x, int y, weapon 
 	}
 	else if (isButtonPushed(window, upgrade1, x, y, event) == true)
 	{
-		if (moneyy >= 100)
+		if (delay.getElapsedTime().asMilliseconds() > 200)
 		{
-			m4a4.damage+=15;
-			moneyy -= 100;
-			m4a4.lvl++;
+			if (moneyy >= 100)
+			{
+				m4a4.damage += 15;
+				moneyy -= 100;
+				m4a4.lvl++;
+			}
+			delay.restart();
 		}
 	}
 	else if (isButtonPushed(window, upgrade2, x, y, event) == true && shotgunIsUnlocked == true)
 	{
-		if (moneyy >= 100)
+		if (delay.getElapsedTime().asMilliseconds() > 200)
 		{
-			shotgun.damage += 30;
-			moneyy -= 100;
-			shotgun.lvl++;
-		}
+			if (moneyy >= 100)
+			{
+				shotgun.damage += 30;
+				moneyy -= 100;
+				shotgun.lvl++;
+			}
+			delay.restart();
+		}		
 	}
 	else if (isButtonPushed(window, upgrade3, x, y, event) == true && minigunIsUnlocked == true)
 	{
-		if (moneyy >= 100)
+		if (delay.getElapsedTime().asMilliseconds() > 200)
 		{
-			minigun.damage += 5;
-			moneyy -= 100;
-			minigun.lvl++;
-		}
+			if (moneyy >= 100)
+			{
+				minigun.damage += 5;
+				moneyy -= 100;
+				minigun.lvl++;
+			}
+			delay.restart();
+		}		
 	}
 	else if (isButtonPushed(window, upgrade2, x, y, event) == true && shotgunIsUnlocked == false)
 	{
-		if (moneyy >= 150)
+		if (delay.getElapsedTime().asMilliseconds() > 200)
 		{
-			shotgun.isUnlocked = true;
-			moneyy -= 150;
-			shotgun.lvl++;
-		}
+			if (moneyy >= 150)
+			{
+				shotgun.isUnlocked = true;
+				moneyy -= 150;
+				shotgun.lvl++;
+			}
+			delay.restart();
+		}	
 	}
 	else if (isButtonPushed(window, upgrade3, x, y, event) == true && minigunIsUnlocked == false)
 	{
-		if (moneyy >= 150)
+		if (delay.getElapsedTime().asMilliseconds() > 200)
 		{
-			minigun.isUnlocked = true;
-			moneyy -= 150;
-			minigun.lvl++;
-		}
+			if (moneyy >= 150)
+			{
+				minigun.isUnlocked = true;
+				moneyy -= 150;
+				minigun.lvl++;
+			}
+			delay.restart();
+		}	
 	}
 
 }

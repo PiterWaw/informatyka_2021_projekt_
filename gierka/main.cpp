@@ -1,6 +1,4 @@
-#include <SFML/Graphics.hpp>
-#include "SFML/Audio.hpp"
-#include <iostream>
+#include "menu.h"
 #include "mapa.h"
 #include "weapon.h"
 #include "enemy.h"
@@ -10,10 +8,12 @@
 #include "shotting.h"
 #include "enemySpawner.h"
 #include "HUD.h"
-#include "waveBreak.h"
 #include "gameOver.h"
-#include "menu.h"
 #include "nick.h"
+#include <SFML/Graphics.hpp>
+#include "waveBreak.h"
+#include <iostream>
+#include <sstream>
 
 
 
@@ -21,81 +21,9 @@
 
 
 
-typedef struct {
-	char name[20];
-	int score;
-} dataStruct;
 
-class data
-{
-public:
-	dataStruct s1[3];
 
-	FILE* file;
 
-	void save(std::string name, int score);
-	void read();
-	data();
-
-	const char* PERSON_OUT = "(%s, %d)\n";
-	const char* PERSON_IN = "(%s, %d)\n";
-};
-
-data::data()
-{
-
-}
-
-void data::save(std::string name, int score)
-{
-	//read();
-
-	fopen_s(&file, "leaderboard.dat", "w+");
-
-	if (score > s1[2].score)
-	{
-		if (score > s1[1].score)
-		{
-			if (score > s1[0].score)
-			{
-				s1[0].score = score;
-				strcpy(s1[0].name, name.c_str());
-			}
-			else
-			{
-				s1[1].score = score;
-				strcpy(s1[1].name, name.c_str());
-			}
-		}
-		else
-		{
-			s1[2].score = score;
-			strcpy(s1[2].name, name.c_str());
-		}
-	}
-
-	for (int i = 0; i < 3; i++)
-	{
-		//fwrite(s1, sizeof(s1), 3, file);
-		fprintf_s(file, PERSON_OUT, s1[i].name, s1[i].score);
-	}
-	fclose(file);
-}
-
-void data::read()
-{
-	//file = fopen("leaderboard.dat", "r");
-	fopen_s(&file, "leaderboard.dat", "r");
-
-	fseek(file, 0, SEEK_SET);
-	for (int i = 0; i < 3; i++)
-	{
-		//fread(s1, sizeof(s1), 3, file);		
-		fscanf_s(file, s1[i].name, 20, s1[i].score);
-	}
-
-	fclose(file);
-}
 
 int main()
 {
@@ -126,7 +54,6 @@ int main()
 	waveBreak waveBreak;
 	gameOver gameOver;
 	menu menu;
-	data data;
 	nick nick(20, sf::Color::Black);
 	mapa1.loadFiles();
 	int whichWeapon = 1;
@@ -154,13 +81,13 @@ int main()
 	shotgun.ammo = 5;
 	shotgun.damage = 200;
 	shotgun.fireRate = 1500;
-	shotgun.isUnlocked = true;
+	shotgun.isUnlocked = false;
 
 	minigun.maxAmmo = 100;
 	minigun.ammo = 100;
 	minigun.damage = 15;
 	minigun.fireRate = 60;
-	minigun.isUnlocked = true;
+	minigun.isUnlocked = false;
 
 
 	int HUDx = player1.getPlayerPosition().x;
@@ -173,6 +100,8 @@ int main()
 	bool resetAmmo = false;
 	bool saveResaults = false;
 	bool waveBreaks = false;
+
+	
 
 	sf::Event event;
 	
@@ -200,7 +129,7 @@ int main()
 			
 			nick.setPosition(menu.button4.getPosition().x-40, menu.button4.getPosition().y-120);
 			nick.draw(gra);
-			std::cout << nick.returnNpis() <<" " << menuStage<<  std::endl;
+			//std::cout << nick.returnNpis() <<" " << menuStage<<  std::endl;
 
 
 			//menu.drawTo(gra);
@@ -210,7 +139,8 @@ int main()
 		{
 			if (saveResaults == true)
 			{
-				data.save("piotrek", enemySpawner.wave - 10);
+				
+				saveResaults = false;
 			}
 			menu.menuDisplay(gra, event, menuStage, view, waveBreaks);
 
